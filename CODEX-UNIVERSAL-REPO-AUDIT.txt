@@ -1,0 +1,27 @@
+Run the Universal Codex Repo Audit Workflow on this repository. Do not mix projects.
+
+Update PROJECT-STATUS.md with:
+
+what the site does
+files/pages complete
+files/pages needing work
+SEO status
+sitemap/robots status
+footer/navigation status
+trust/legal status
+monetization status
+QA status
+real blockers
+next safe queue
+
+Report only after a full QA pass, several useful updates, or a real blocker.
+
+Final report:
+
+pages checked
+checks run
+files changed
+issues fixed
+blockers
+whether the workflow passed
+next safe queue
