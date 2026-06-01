@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Auto Refresh Viewer</title>
+  <style>
+    :root { font-family: Arial, sans-serif; color: #172033; background: #f4f7fb; }
+    body { margin: 0; }
+    header { padding: 18px 20px; background: #172033; color: white; }
+    main { padding: 18px; }
+    .panel { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; background: white; border-radius: 14px; padding: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.08); margin-bottom: 14px; }
+    label { display: grid; gap: 6px; font-weight: 700; }
+    input { padding: 10px 12px; border: 1px solid #cfd8e3; border-radius: 10px; min-width: 120px; }
+    button { border: 0; border-radius: 10px; padding: 11px 14px; font-weight: 800; cursor: pointer; }
+    .start { background: #20a46b; color: white; }
+    .stop { background: #d94242; color: white; }
+    .once { background: #e7edf7; color: #172033; }
+    #status { font-weight: 700; }
+    iframe { width: 100%; height: 72vh; border: 1px solid #cfd8e3; border-radius: 14px; background: white; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Auto Refresh Viewer</h1>
+    <p>Development helper. This page is noindex and only refreshes the preview below.</p>
+  </header>
+  <main>
+    <section class="panel" aria-label="Auto refresh controls">
+      <label>Page path
+        <input id="path" value="/" placeholder="/ or /app.html" />
+      </label>
+      <label>Seconds
+        <input id="seconds" type="number" min="3" value="15" />
+      </label>
+      <button class="start" id="start" type="button">Start Auto Refresh</button>
+      <button class="stop" id="stop" type="button">Stop</button>
+      <button class="once" id="once" type="button">Refresh Once</button>
+      <span id="status">Ready</span>
+    </section>
+    <iframe id="frame" title="Auto refresh preview"></iframe>
+  </main>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let timer = null;
+    function getDelay() { return Math.max(3, Number($('seconds').value) || 15) * 1000; }
+    function getTargetUrl() { const rawPath = $('path').value || '/'; const url = new URL(rawPath, window.location.origin); url.searchParams.set('_refresh', Date.now().toString()); return url.toString(); }
+    function refreshFrame() { $('frame').src = getTargetUrl(); $('status').textContent = 'Last refresh: ' + new Date().toLocaleTimeString(); }
+    function stopRefresh() { if (timer) clearInterval(timer); timer = null; $('status').textContent = 'Auto refresh OFF'; }
+    function startRefresh() { stopRefresh(); localStorage.setItem('autoRefreshPath', $('path').value || '/'); localStorage.setItem('autoRefreshSeconds', $('seconds').value || '15'); refreshFrame(); timer = setInterval(refreshFrame, getDelay()); $('status').textContent = 'Auto refresh ON'; }
+    $('path').value = localStorage.getItem('autoRefreshPath') || '/';
+    $('seconds').value = localStorage.getItem('autoRefreshSeconds') || '15';
+    $('start').addEventListener('click', startRefresh); $('stop').addEventListener('click', stopRefresh); $('once').addEventListener('click', refreshFrame); refreshFrame();
+  </script>
+</body>
+</html>
